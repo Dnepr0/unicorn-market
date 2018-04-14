@@ -14,6 +14,7 @@ function OnPageLoad() {
  */
 function OnUpdateButtonClickHandler() {
     Table.update();
+    autoModeCheck.checked = false;
 }
 
 /**
