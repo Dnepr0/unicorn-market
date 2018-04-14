@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>UnicornGo Market</title>  
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
+    <script src="app.js"></script>
+</head>
+<body>
+    <table id="resultTable">
+        <thead>
+            <tr>
+                <th>№</th>
+                <th>ID</th>
+                <th>Owner</th>
+                <th>Generation</th>
+                <th>Reproduction</th>
+                <th>PAIR</th>
+                <th>CANDY</th>
+                <th>ETH</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <div id="controlPanel">
+        <!-- update button -->
+        <input type="button" value="UPDATE" id="updateButton"><br>
+        <!-- target radio -->
+        <div name="controlBox"><label for="controlBox">target</label><br>
+            <input type="radio" name="targetRadio" id="targetRadio1" value="Buy" checked>
+            <label for="targetRadio1">Buy</label><br>
+            <input type="radio" name="targetRadio" id="targetRadio2" value="Pair">
+            <label for="targetRadio2">Pair</label><br>
+            <input type="radio" name="targetRadio" id="targetRadio3" value="All">
+            <label for="targetRadio3">All</label><br>
+        </div>
+        <!-- sort radio -->
+        <div name="controlBox"><label for="controlBox">sort</label><br>
+            <input type="radio" name="sortRadio" id="sortRadio1" value="expensive" checked>
+            <label for="sortRadio1">expensive</label><br>
+            <input type="radio" name="sortRadio" id="sortRadio2" value="popular">
+            <label for="sortRadio2">popular</label><br>
+            <input type="radio" name="sortRadio" id="sortRadio3" value="newest">
+            <label for="sortRadio3">newest</label><br>
+        </div>
+        <div name="controlBox"><label for="controlBox">limit</label>
+            <input type="text" name="limitInput" id="limitInput" maxlength="4">
+        </div>
+        <div name="controlBox"><label for="controlBox">flags</label><br>
+            <input type="checkbox" name="autoModeCheck" id="autoModeCheck">
+            <label for="autoModeCheck">auto mode</label>
+        </div>
+    </div>
+    <div id="infoPanel">
+        <div id="lastUpdateInfo"></div>
+    </div>
+
+    <script src="jquery-3.3.1.min.js"></script>
+</body>
+</html>

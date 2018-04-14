@@ -1,0 +1,78 @@
+html {
+    font-family: sans-serif;
+}
+
+/* TABLE */
+table {
+    border-collapse: collapse;
+}
+
+table, th, td {
+    border: 1px solid black;
+}
+th, td {
+    padding: 5px;
+    text-align: left;
+}
+th {
+    background-color: #4CAF50;
+    color: white;
+    padding: 7px;
+}
+th:hover {
+    background: green;
+    cursor: pointer;
+}
+
+tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+/* INFO PANEL */
+#infoPanel {
+    position: fixed;
+    right: 160px;
+    top: 2px;
+}
+/* CONTROL PANEL */
+#controlPanel {
+    position: fixed;
+    right: 10px;
+    top: 10px;
+}
+
+/* button input */
+#updateButton {
+    background-color: #4CAF50; /* Green */
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    width: 140px;
+}
+#updateButton:hover {
+    background: green;
+    cursor: pointer;
+}
+
+/* radio input */
+div[name="controlBox"],
+#infoPanel div {
+    border: 1px solid black;
+    padding: 8px;
+    margin-top: 8px;
+    width: 124px;
+}
+
+label[for="controlBox"] {
+    
+    
+}
+
+/* text input (limit) */
+input[name="limitInput"] {
+    width: 80px;
+}
