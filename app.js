@@ -170,8 +170,14 @@ class Request {
         Request.send(1, function() {
             var response = JSON.parse(this.response);
             var count = Math.ceil(response.total / 12);
+            // Если установлен limit
+            var limit = limitInput.value;
+            if (isNaN(limit) || limit < 1 || limit > count) {                
+                limit = 0;
+            }
+            else limit = count - limit;
 
-            while (count) {
+            while (count > limit) {
                 Request.send(count--, Request.outTableResponseHandler);
             }
         });

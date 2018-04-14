@@ -23,7 +23,6 @@ th:hover {
     background: green;
     cursor: pointer;
 }
-
 tr:nth-child(even) {
     background-color: #f2f2f2;
 }
@@ -34,6 +33,7 @@ tr:nth-child(even) {
     right: 160px;
     top: 2px;
 }
+
 /* CONTROL PANEL */
 #controlPanel {
     position: fixed;
