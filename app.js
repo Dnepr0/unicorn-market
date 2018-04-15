@@ -1,3 +1,5 @@
+const AUTO_MODE_UPDATE_TIMEOUT = 200000
+
 /**
  * Инициализирует скрипт после загрузки страницы
  * (вешает обработчики событий, инициирует вечный цикл)
@@ -27,22 +29,17 @@ function OnTableClickHandler(e) {
     }
 }
 
+/**
+ * Вечный цикл обновления авто обновления страницы и анализа
+ */
 function autoMode() {
     if (autoModeCheck.checked) {
         Table.update();
-        console.log("Last table update: " + new Date().toLocaleString());
         
         setTimeout(Table.analize, 5000);
     }
 
-    setTimeout(autoMode, 300000);
-}
-
-/**
- * Отправляет уведомление в телеграм
- */
-function TelegramNotify(msg) {
-    $.get("http://pushmebot.ru/send?key=7471f5cc0bcc3c11187ca5996b4163f4&message=" + msg);
+    setTimeout(autoMode, AUTO_MODE_UPDATE_TIMEOUT);
 }
 
 
@@ -59,6 +56,7 @@ class Table {
     static update() {
         Request.sendAll();
         Table.clear();
+        Notify.info("Last table update: " + new Date().toLocaleString())
     }
 
     /**
@@ -100,27 +98,35 @@ class Table {
      * Анализирует таблицу
      */
     static analize() {
-        Table.sort(7);
+        Table.sort(8);
         if (resultTable.children[1].firstChild.lastChild.innerHTML == "0.001") {
-            TelegramNotify("!!!FIND UNICORN!!!");
+            Notify.telegram("!!!FIND UNICORN!!!");
         }
     }
 
     /**
      * Добавляет строку в таблицу
-     * @param {*} item добавляемый объект
+     * @param {*} unicorn_blockchain_id 
+     * @param {*} owner_id 
+     * @param {*} generation 
+     * @param {*} reproduction 
+     * @param {*} wtf 
+     * @param {*} candy_breed_cost 
+     * @param {*} candy_cost 
+     * @param {*} cost 
      */
-    static addRow(item) {
+    static addRow(unicorn_blockchain_id, owner_id, generation, reproduction, wtf, candy_breed_cost, candy_cost, cost) {
         var newRow = resultTable.children[1].insertRow();
             
         newRow.insertCell().innerHTML = newRow.rowIndex;
-        newRow.insertCell().innerHTML = "<a href='https://play.unicorngo.io/unicorn/" + item.unicorn_blockchain_id + "'>" + item.unicorn_blockchain_id + "</a>";
-        newRow.insertCell().innerHTML = item.owner_id;
-        newRow.insertCell().innerHTML = item.generation;
-        newRow.insertCell().innerHTML = item.reproduction;
-        newRow.insertCell().innerHTML = item.candy_breed_cost;
-        newRow.insertCell().innerHTML = item.candy_cost;
-        newRow.insertCell().innerHTML = item.cost;
+        newRow.insertCell().innerHTML = "<a href='https://play.unicorngo.io/unicorn/" + unicorn_blockchain_id + "'>" + unicorn_blockchain_id + "</a>";
+        newRow.insertCell().innerHTML = owner_id;
+        newRow.insertCell().innerHTML = generation;
+        newRow.insertCell().innerHTML = reproduction;
+        newRow.insertCell().innerHTML = wtf;
+        newRow.insertCell().innerHTML = candy_breed_cost;
+        newRow.insertCell().innerHTML = candy_cost;
+        newRow.insertCell().innerHTML = cost;
     }
 }
 
@@ -176,6 +182,7 @@ class Request {
                 limit = 0;
             }
             else limit = count - limit;
+            //console.dir(response)
 
             while (count > limit) {
                 Request.send(count--, Request.outTableResponseHandler);
@@ -190,10 +197,37 @@ class Request {
         var response = JSON.parse(this.response);
         // Добавление элементов в таблицу
         response.items.forEach(item => {
-            Table.addRow(item);
+            Table.addRow(   item.unicorn_blockchain_id,
+                            item.owner_id,
+                            item.generation,
+                            item.strength + item.agility + item.speed + item.intelligence + item.charisma,
+                            new Date(item.updated_at).toLocaleString(),
+                            item.candy_breed_cost,
+                            item.candy_cost,
+                            item.cost);
         });
     }
 }
 
+/**
+ * Уведомляет о событиях
+ */
+class Notify {
+    /**
+     * Отправляет уведомление в телеграм
+     * @param {*} msg текст сообщения
+     */
+    static telegram(msg) {
+        $.get("http://pushmebot.ru/send?key=7471f5cc0bcc3c11187ca5996b4163f4&message=" + msg);
+    }
+    
+    /**
+     * Отображает сообщение для пользователя
+     * @param {*} msg текст сообщения
+     */
+    static info(msg) {
+        lastUpdateInfo.innerHTML = msg;
+    }
+}
 
 window.onload = OnPageLoad;
