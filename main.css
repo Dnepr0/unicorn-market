@@ -74,5 +74,8 @@ label[for="controlBox"] {
 
 /* text input (limit) */
 input[name="limitInput"] {
-    width: 80px;
+    width: 50px;
+}
+input[name="ownerInput"] {
+    width: 50px;
 }

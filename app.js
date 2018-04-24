@@ -1,4 +1,6 @@
-const AUTO_MODE_UPDATE_TIMEOUT = 200000
+const AUTO_MODE_UPDATE_TIMEOUT = 900000;
+const TABLE_ANALIZE_TIMEOUT = 10000;
+var GlobalArray = [];
 
 /**
  * Инициализирует скрипт после загрузки страницы
@@ -36,7 +38,7 @@ function autoMode() {
     if (autoModeCheck.checked) {
         Table.update();
         
-        setTimeout(Table.analize, 5000);
+        setTimeout(Table.analize, TABLE_ANALIZE_TIMEOUT);
     }
 
     setTimeout(autoMode, AUTO_MODE_UPDATE_TIMEOUT);
@@ -64,6 +66,7 @@ class Table {
      */
     static clear() {
         resultTable.children[1].innerHTML = null;
+        GlobalArray = [];
     }
 
     /**
@@ -115,7 +118,7 @@ class Table {
      * @param {*} candy_cost 
      * @param {*} cost 
      */
-    static addRow(unicorn_blockchain_id, owner_id, generation, reproduction, wtf, candy_breed_cost, candy_cost, cost) {
+    static addRow(unicorn_blockchain_id, owner_id, generation, reproduction, candy_breed_cost, candy_cost, cost) {
         var newRow = resultTable.children[1].insertRow();
             
         newRow.insertCell().innerHTML = newRow.rowIndex;
@@ -123,7 +126,6 @@ class Table {
         newRow.insertCell().innerHTML = owner_id;
         newRow.insertCell().innerHTML = generation;
         newRow.insertCell().innerHTML = reproduction;
-        newRow.insertCell().innerHTML = wtf;
         newRow.insertCell().innerHTML = candy_breed_cost;
         newRow.insertCell().innerHTML = candy_cost;
         newRow.insertCell().innerHTML = cost;
@@ -151,17 +153,25 @@ class Request {
             req.open("post", "https://core.unicorngo.io/v1/unicorn/get", true);
             // Устанавливаем заголовок с типом отправляемых данных json
             req.setRequestHeader("Content-Type","application/json; charset=utf-8");
+            // Задаем фильтры
+            var filters = {
+                'charisma': [1, 10],
+                'intelligence': [1, 10],
+                'speed': [1, 10],
+                'strength': [1, 10]
+            };
+            var owner_id = $('#ownerInput').val();
+            if (owner_id && !isNaN(owner_id)) {
+                filters = {
+                    'owner_id': owner_id
+                }
+            }
             // Отправляем запрос на сервер
             req.send(JSON.stringify({
                 'page': num,
                 'sort': $('input[name=sortRadio]:checked').val(),
                 'target': $('input[name=targetRadio]:checked').val(),
-                'filters': {
-                    'charisma': [1, 10],
-                    'intelligence': [1, 10],
-                    'speed': [1, 10],
-                    'strength': [1, 10]
-                }
+                'filters': filters
             }));
         }
         else console.error("Can't create XMLHttpRequest");
@@ -195,13 +205,13 @@ class Request {
      */
     static outTableResponseHandler() {
         var response = JSON.parse(this.response);
+        GlobalArray = GlobalArray.concat(response.items);
         // Добавление элементов в таблицу
         response.items.forEach(item => {
             Table.addRow(   item.unicorn_blockchain_id,
                             item.owner_id,
                             item.generation,
                             item.strength + item.agility + item.speed + item.intelligence + item.charisma,
-                            new Date(item.updated_at).toLocaleString(),
                             item.candy_breed_cost,
                             item.candy_cost,
                             item.cost);
@@ -231,3 +241,26 @@ class Notify {
 }
 
 window.onload = OnPageLoad;
+
+
+
+// experemental 
+function GlobalArrayToSql() {
+    // CREATE TABLE unicorns
+    var script = "CREATE TABLE unicorns (";
+    for (prop in GlobalArray[0]) {
+        script += prop + " VARCHAR2(255), "
+    }
+    script += "void VARCHAR2(1)); \n";
+
+    // INSERT INTO unicorns VALUES
+    GlobalArray.forEach(unicorn => {
+        var tmp = "INSERT INTO unicorns VALUES("
+        for (prop in unicorn) {
+            tmp += unicorn[prop] + ", "
+        }
+
+        script += tmp + " 0);\n";
+    });
+    return script;
+}
